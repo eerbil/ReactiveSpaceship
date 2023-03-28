@@ -1,10 +1,5 @@
-fun main(args: Array<String>) {
+fun main() {
     println("Hello World!")
-
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-  //  SensorManager(SensorDataHelper())
-    TakeoffModule(EngineData())
 }
 
 
@@ -12,7 +7,7 @@ fun main(args: Array<String>) {
 
 // Exercise 2: Trigger take-off when reaches 80%
 
-// Exercise 2: Trigger take-off when reaches 80% (with a Single)
+// Exercise 2b: Trigger take-off when reaches 80% (with a Single)
 
 // Exercise 3: Take maximum value from the three sensors, until a sensor emits a corrupted data, then drop that sensor
 // (merge, takeUntil, filter)
@@ -23,5 +18,9 @@ fun main(args: Array<String>) {
 // Exercise 5: Every time the oxygen / pressure level is below critical, take the next five oxygen reading and log
 // their average until the level goes above critical again (buffer, map)
 
-// Exercise 6: Get location updates (throttle to get a precise distance to destination, sensor data in exercise 2 must
-// be above a level and distance must be less than the limit to land (throttle, map, combine)
+// Exercise 6: Get location updates for landing so that distance must be less than the landing threshold of 20
+// when landing team allows landing
+// HINT: Landing must start immediately when team gives a go, otherwise we need to wait for the next opportunity
+
+// Exercise 7: Sensors are borken so the data we get is correct only once in every 250 ms but landing team allows
+// landing unless they specify it is not allowed
