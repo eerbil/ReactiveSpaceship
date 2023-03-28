@@ -13,17 +13,16 @@ class SensorManager(sensorRepository: SensorRepository) {
     val o2Reading: Flowable<Int> =
         o2Sensor1.takeWhile { !it.isCorrupted }.mergeWith(o2Sensor2).map { it.data }
 
-    // Exercise 4: Show critical level if oxygen level and pressure is not within a safe limit (mathemtical function here),
-    // make sure that this is done efficiently (combineLatest, map, distinctUntilChanged)
+    // Exercise 4: Show critical level if oxygen level and pressure is not within a safe limit
+    // make sure that this is done efficiently
     val isCriticalLevel: Flowable<Boolean> = Flowable.combineLatest(o2Reading, pressureSensor) { o2, pressure ->
-        o2 < 40 && pressure.data > 0.5
+        o2 < 4 && pressure.data > 0.5
     }.distinctUntilChanged()
 
-    // Exercise 5: Every time the oxygen / pressure level is below critical, take the next five oxygen reading and log
-    // their average until the level goes above critical again (buffer, map)
-    //TODO: trigger only when isCriticalLevel is true
+    // Exercise 5: Take the running average of five oxygen readings and take
+    // their average
     val averageO2Level = o2Reading
-        .buffer(5)
+        .buffer(5,1)
         .map { it.average() }
 }
 

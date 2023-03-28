@@ -5,7 +5,7 @@ import io.reactivex.subjects.BehaviorSubject
 
 class TakeoffModule(engineData: EngineData) {
 
-    // Exercise 1: Take-off possibility when batteries are charged above 85% to color codes (map)
+    // Exercise 1: Take-off possibility when batteries are charged above 80% to color codes (map)
     val takeOffColor: Flowable<String> = engineData.engineBoostPercentage.map {
         if (it < 30) "RED"
         else if (it in 30..79) "YELLOW"

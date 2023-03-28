@@ -2,8 +2,7 @@ fun main() {
     println("Hello World!")
 }
 
-
-// Exercise 1: Take-off possibility when batteries are charged above 85% to color codes (map)
+// Exercise 1: Take-off possibility when batteries are charged above 80% to color codes (map)
 
 // Exercise 2: Trigger take-off when reaches 80%
 
@@ -22,5 +21,5 @@ fun main() {
 // when landing team allows landing
 // HINT: Landing must start immediately when team gives a go, otherwise we need to wait for the next opportunity
 
-// Exercise 7: Sensors are borken so the data we get is correct only once in every 250 ms but landing team allows
+// Exercise 7: Sensors are broken so the data we get is correct only once in every 250 ms but landing team allows
 // landing unless they specify it is not allowed

@@ -14,7 +14,7 @@ class LandingModule(landingHelper: LandingHelper) {
                 isAllowed && distance <= 20
             }.filter { it }.doOnNext { landingHelper.startLanding() }
 
-    // Exercise 7: Sensors are borken so the data we get is correct only once in every 250 ms but landing team allows
+    // Exercise 7: Sensors are broken so the data we get is correct only once in every 250 ms but landing team allows
     // landing unless they specify it is not allowed
     val landingAllowedWithBrokenSensor: Flowable<Boolean> =
         Flowable
