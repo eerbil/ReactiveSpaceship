@@ -1,6 +1,5 @@
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
-import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 
 class TakeoffModule(engineData: EngineData) {
@@ -13,18 +12,11 @@ class TakeoffModule(engineData: EngineData) {
     }
 
     // Exercise 2: Trigger take-off when reaches 80%
-    val takeOffTriggered: Flowable<Boolean> =
+    val sufficientEngineBoost: Flowable<Boolean> =
         engineData.engineBoostPercentage
             .filter { it >= 80 }
             .map { true }
             .distinctUntilChanged()
-
-    // Exercise 2b: Trigger take-off when reaches 80% (what is a Single?)
-    val takeOffTriggeredSingle: Single<Boolean> =
-        engineData.engineBoostPercentage
-            .filter { it >= 80 }
-            .map { true }
-            .firstOrError()
 }
 
 class EngineData {

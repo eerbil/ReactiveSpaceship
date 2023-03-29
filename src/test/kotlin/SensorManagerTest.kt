@@ -10,13 +10,20 @@ class SensorManagerTest {
 
     private lateinit var cut: SensorManager
 
+    private val alertSensor1Subject = BehaviorSubject.create<SensorData<Boolean>>()
+    private val alertSensor2Subject = BehaviorSubject.create<SensorData<Boolean>>()
+
     private var o2Sensor1Subject: BehaviorSubject<SensorData<Int>> = BehaviorSubject.create()
     private var o2Sensor2Subject: BehaviorSubject<SensorData<Int>> = BehaviorSubject.create()
+
     private var pressureSensorSubject: BehaviorSubject<SensorData<Double>> = BehaviorSubject.create()
 
     @BeforeEach
     fun beforeEach() {
         val sensorRepository = mockk<SensorRepository>()
+        every { sensorRepository.alertSensor1 } returns alertSensor1Subject.toFlowable(BackpressureStrategy.BUFFER)
+        every { sensorRepository.alertSensor2 } returns alertSensor2Subject.toFlowable(BackpressureStrategy.BUFFER)
+
         every { sensorRepository.o2Sensor1 } returns o2Sensor1Subject.toFlowable(BackpressureStrategy.BUFFER)
         every { sensorRepository.o2Sensor2 } returns o2Sensor2Subject.toFlowable(BackpressureStrategy.BUFFER)
         every { sensorRepository.pressureSensor } returns pressureSensorSubject.toFlowable(BackpressureStrategy.BUFFER)
@@ -24,20 +31,51 @@ class SensorManagerTest {
     }
 
     @Test
+    fun showAlertIfNecessary() {
+        var showAlert = false
+        cut.showAlert.subscribe { showAlert = it; }
+        alertSensor1Subject.onNext(SensorData(false))
+        assertEquals(showAlert, false)
+        alertSensor2Subject.onNext(SensorData(data = true, isCorrupted = true))
+        assertEquals(showAlert, false)
+        alertSensor1Subject.onNext(SensorData(false))
+        assertEquals(showAlert, false)
+        alertSensor1Subject.onNext(SensorData(true))
+        assertEquals(showAlert, true)
+        alertSensor1Subject.onNext(SensorData(true))
+        assertEquals(showAlert, true)
+        alertSensor2Subject.onNext(SensorData(data = false, isCorrupted = true))
+        assertEquals(showAlert, true)
+        alertSensor2Subject.onNext(SensorData(data = true, isCorrupted = true))
+        assertEquals(showAlert, true)
+        alertSensor1Subject.onNext(SensorData(false))
+        assertEquals(showAlert, false)
+        alertSensor2Subject.onNext(SensorData(true))
+        assertEquals(showAlert, true)
+        alertSensor2Subject.onNext(SensorData(true))
+        assertEquals(showAlert, true)
+    }
+
+    @Test
     fun getMaxSensorValue() {
         var maxValue = 0
         cut.o2Reading.subscribe { maxValue = maxValue.coerceAtLeast(it); println(it) }
         o2Sensor1Subject.onNext(SensorData(15))
+        assertEquals(maxValue, 15)
         o2Sensor2Subject.onNext(SensorData(74))
+        assertEquals(maxValue, 74)
         o2Sensor1Subject.onNext(SensorData(65))
         o2Sensor2Subject.onNext(SensorData(32))
+        assertEquals(maxValue, 74)
         o2Sensor1Subject.onNext(SensorData(35))
         o2Sensor2Subject.onNext(SensorData(27))
         o2Sensor1Subject.onNext(SensorData(944, true))
+        assertEquals(maxValue, 74)
         o2Sensor2Subject.onNext(SensorData(84))
+        assertEquals(maxValue, 84)
         o2Sensor1Subject.onNext(SensorData(356))
+        assertEquals(maxValue, 84)
         o2Sensor2Subject.onNext(SensorData(42))
-
         assertEquals(maxValue, 84)
     }
 
@@ -76,9 +114,13 @@ class SensorManagerTest {
         var avg = 0.0
         cut.averageO2Level.subscribe { avg = it ?: Double.MIN_VALUE}
         o2Sensor1Subject.onNext(SensorData(1))
+        assertEquals(avg, 0)
         o2Sensor2Subject.onNext(SensorData(3))
+        assertEquals(avg, 0)
         o2Sensor2Subject.onNext(SensorData(6))
+        assertEquals(avg, 0)
         o2Sensor1Subject.onNext(SensorData(7))
+        assertEquals(avg, 0)
         o2Sensor2Subject.onNext(SensorData(3))
         assertEquals(avg, 4.0)
         o2Sensor1Subject.onNext(SensorData(5))

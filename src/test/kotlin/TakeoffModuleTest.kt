@@ -27,7 +27,7 @@ class TakeoffModuleTest {
     @Test
     fun getColorStatus() {
         var color = ""
-        cut.takeOffColor.subscribe { color = it; println(it) }
+        cut.takeOffColor.subscribe { color = it; }
         engineBoostSubject.onNext(0)
         assertEquals(color, "RED")
         engineBoostSubject.onNext(10)
@@ -54,25 +54,7 @@ class TakeoffModuleTest {
 
     @Test
     fun initiateTakeoffOnlyOnce() {
-        cut.takeOffTriggered.subscribe { engineData.initiateTakeoff() }
-        engineBoostSubject.onNext(0)
-        engineBoostSubject.onNext(10)
-        engineBoostSubject.onNext(20)
-        engineBoostSubject.onNext(30)
-        engineBoostSubject.onNext(40)
-        engineBoostSubject.onNext(50)
-        engineBoostSubject.onNext(60)
-        engineBoostSubject.onNext(70)
-        engineBoostSubject.onNext(80)
-        engineBoostSubject.onNext(90)
-        engineBoostSubject.onNext(100)
-
-        verify(exactly = 1) { engineData.initiateTakeoff() }
-    }
-
-    @Test
-    fun initiateTakeoffOnlyOnceWithSingle() {
-        cut.takeOffTriggeredSingle.doOnSuccess{ engineData.initiateTakeoff() }.subscribe()
+        cut.sufficientEngineBoost.subscribe { engineData.initiateTakeoff() }
         engineBoostSubject.onNext(0)
         engineBoostSubject.onNext(10)
         engineBoostSubject.onNext(20)
