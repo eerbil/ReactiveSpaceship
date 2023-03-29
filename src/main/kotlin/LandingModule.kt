@@ -1,21 +1,30 @@
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
+
+/** Did you know that landing is one of the most dangerous steps of a space mission?
+ *  We need to make sure that the spaceship is close enough to land, and also we need to
+ *  get the approval from the control tower before landing. **/
 
 class LandingModule(landingHelper: LandingHelper) {
-    // Exercise 7: Get location updates for landing so that distance must be less than the landing threshold of 20
-    // when landing team allows landing
-    // HINT: Landing must start immediately when team gives a go, otherwise we need to wait for the next opportunity
+    // Exercise 7: In order to land we need to ensure that the spaceship is close enough to the ground.
+    // Landing must start immediately when team gives permission, otherwise we need to wait for the next opportunity
+    // HINT: permissionToLand must be the trigger for the distance check and landing
+    private val permissionToLand = landingHelper.permissionToLand
+    private val distanceToLandingZone = landingHelper.distanceToLandingZone
     val landingAllowed: Flowable<Boolean> =
-        landingHelper.permissionToLand
-            .withLatestFrom(landingHelper.distanceToLandingZone)
+        permissionToLand
+            .withLatestFrom(distanceToLandingZone)
             { _, distance ->
                 distance <= 20
-            }.filter { it }.doOnNext { landingHelper.startLanding() }
+            }.filter { it }
 
-    // Exercise 8: Inform the pilots about distance to landing destination but do it every second and round up
-    // the number to nearest 100 meters
-    val distanceTolanding: Flowable<Int>? = null //TODO
+    // Exercise 8: We need to inform the pilots about distance to landing
+    // destination but in order to not confuse them we need to do it every second and round the number
+    val distanceToLanding: Flowable<Int> =
+        distanceToLandingZone.throttleWithTimeout(1, TimeUnit.SECONDS).map { it.roundToInt() }
 }
 
 class LandingHelper {

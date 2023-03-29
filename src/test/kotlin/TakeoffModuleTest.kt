@@ -57,13 +57,17 @@ class TakeoffModuleTest {
         cut.sufficientEngineBoost.subscribe { engineData.initiateTakeoff() }
         engineBoostSubject.onNext(0)
         engineBoostSubject.onNext(10)
+        verify(exactly = 0) { engineData.initiateTakeoff() }
         engineBoostSubject.onNext(20)
         engineBoostSubject.onNext(30)
         engineBoostSubject.onNext(40)
         engineBoostSubject.onNext(50)
         engineBoostSubject.onNext(60)
+        verify(exactly = 0) { engineData.initiateTakeoff() }
         engineBoostSubject.onNext(70)
+        verify(exactly = 0) { engineData.initiateTakeoff() }
         engineBoostSubject.onNext(80)
+        verify(exactly = 1) { engineData.initiateTakeoff() }
         engineBoostSubject.onNext(90)
         engineBoostSubject.onNext(100)
 

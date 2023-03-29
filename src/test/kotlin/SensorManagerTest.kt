@@ -114,13 +114,13 @@ class SensorManagerTest {
         var avg = 0.0
         cut.averageO2Level.subscribe { avg = it ?: Double.MIN_VALUE}
         o2Sensor1Subject.onNext(SensorData(1))
-        assertEquals(avg, 0)
+        assertEquals(avg, 0.0)
         o2Sensor2Subject.onNext(SensorData(3))
-        assertEquals(avg, 0)
+        assertEquals(avg, 0.0)
         o2Sensor2Subject.onNext(SensorData(6))
-        assertEquals(avg, 0)
+        assertEquals(avg, 0.0)
         o2Sensor1Subject.onNext(SensorData(7))
-        assertEquals(avg, 0)
+        assertEquals(avg, 0.0)
         o2Sensor2Subject.onNext(SensorData(3))
         assertEquals(avg, 4.0)
         o2Sensor1Subject.onNext(SensorData(5))

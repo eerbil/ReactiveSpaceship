@@ -24,7 +24,7 @@ class LandingModuleTest {
 
     @Test
     fun checkLandingIsAllowed() {
-        cut.landingAllowed.subscribe()
+        cut.landingAllowed.subscribe { landingHelper.startLanding() }
         landingIsAllowedSubject.onNext(Unit)
         distanceToLandingZoneSubject.onNext(20.0)
         verify(exactly = 0) { landingHelper.startLanding() }
@@ -45,6 +45,7 @@ class LandingModuleTest {
     //TODO: Test
     @Test
     fun checkLandingDistance() {
+        cut.distanceToLanding.subscribe()
 
     }
 }
