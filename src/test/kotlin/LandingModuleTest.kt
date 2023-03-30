@@ -13,7 +13,7 @@ class LandingModuleTest {
 
     private lateinit var landingHelper: LandingHelper
 
-    val testScheduler = TestScheduler()
+    private val testScheduler = TestScheduler()
 
     private lateinit var cut: LandingModule
 

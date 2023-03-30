@@ -19,20 +19,13 @@ class TakeoffModule(engineData: EngineData) {
     // YELLOW if the engine boost is between 30% and 80%
     // GREEN if the engine boost is 80% and above
     private val engineBoostPercentage = engineData.engineBoostPercentage
-    val takeOffColor: Observable<String> = engineBoostPercentage.map {
-        if (it < 30) "RED"
-        else if (it in 30..79) "YELLOW"
-        else "GREEN"
-    }
+    lateinit var takeOffColor: Observable<String> // TODO
 
     // Exercise 2: Takeoff is possible when the engine boost is 80% or above and we want to trigger
     // takeoff once we reach this level. Make sure the takeoff is triggered only once!
     // HINT: Once we emit true we don't want to emit it again as the takeoff already started
     // What is a Unit? https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/
-    val sufficientEngineBoost: Observable<Unit> =
-        engineBoostPercentage
-            .filter { it >= 80 }.map { }
-            .distinctUntilChanged()
+    lateinit var sufficientEngineBoost: Observable<Unit> // TODO
 }
 
 class EngineData {

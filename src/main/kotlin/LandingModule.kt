@@ -1,7 +1,5 @@
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import java.util.concurrent.TimeUnit
-import kotlin.math.roundToInt
 
 /** PART 3: LANDING **/
 /** Did you know that landing is one of the most dangerous steps of a space mission?
@@ -17,23 +15,14 @@ class LandingModule(landingHelper: LandingHelper) {
     // HINT: permissionToLand must be the trigger for the distance check and landing
     private val permissionToLand = landingHelper.permissionToLand
     private val distanceToLandingZone = landingHelper.distanceToLandingZone
-    val landingAllowed: Observable<Boolean> =
-        permissionToLand
-            .withLatestFrom(distanceToLandingZone)
-            { _, distance ->
-                distance <= 2000
-            }.filter { it }
+    lateinit var landingAllowed: Observable<Boolean> // TODO
 
     // Exercise 8:
     // During the landing procedure we want to continuously announce the remaining distance to the landing
     // zone to the pilots via speaker. In particular, we want to announce the remaining distance rounded to multiples
     // of 100m. While the distance changes quite frequently, we only want to make this
     // announcement at most every 5 seconds.
-    val remainingDistanceAnnouncement: Observable<String> =
-        distanceToLandingZone
-            .throttleFirst(5, TimeUnit.SECONDS)
-            .map { (it / 100).roundToInt() * 100 }
-            .map { it.toString() }
+    lateinit var remainingDistanceAnnouncement: Observable<String> //TODO
 }
 
 class LandingHelper {
