@@ -13,6 +13,7 @@ class LandingModule(landingHelper: LandingHelper) {
     // In order to land we need permission from the team at base. Additionally, we need to ensure that the spaceship is
     // close enough to the ground to initiate the landing procedure. Landing must start immediately when team gives
     // permission, otherwise we need to wait for the next opportunity.
+    // Check the distance to landing is at least 2000km when the permission is received.
     // HINT: permissionToLand must be the trigger for the distance check and landing
     private val permissionToLand = landingHelper.permissionToLand
     private val distanceToLandingZone = landingHelper.distanceToLandingZone
@@ -20,7 +21,7 @@ class LandingModule(landingHelper: LandingHelper) {
         permissionToLand
             .withLatestFrom(distanceToLandingZone)
             { _, distance ->
-                distance <= 20
+                distance <= 2000
             }.filter { it }
 
     // Exercise 8:

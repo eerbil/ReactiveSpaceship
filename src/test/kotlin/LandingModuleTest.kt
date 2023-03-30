@@ -31,19 +31,19 @@ class LandingModuleTest {
     fun checkLandingIsAllowed() {
         cut.landingAllowed.subscribe { landingHelper.startLanding() }
         landingIsAllowedSubject.onNext(Unit)
-        distanceToLandingZoneSubject.onNext(20.0)
+        distanceToLandingZoneSubject.onNext(2000.0)
         verify(exactly = 0) { landingHelper.startLanding() }
-        distanceToLandingZoneSubject.onNext(10.0)
+        distanceToLandingZoneSubject.onNext(1900.0)
         verify(exactly = 0) { landingHelper.startLanding() }
-        distanceToLandingZoneSubject.onNext(30.0)
-        distanceToLandingZoneSubject.onNext(40.0)
+        distanceToLandingZoneSubject.onNext(3000.0)
+        distanceToLandingZoneSubject.onNext(4000.0)
         landingIsAllowedSubject.onNext(Unit)
         verify(exactly = 0) { landingHelper.startLanding() }
-        distanceToLandingZoneSubject.onNext(60.0)
-        distanceToLandingZoneSubject.onNext(20.0)
+        distanceToLandingZoneSubject.onNext(6000.0)
+        distanceToLandingZoneSubject.onNext(2000.0)
         verify(exactly = 0) { landingHelper.startLanding() }
         landingIsAllowedSubject.onNext(Unit)
-        distanceToLandingZoneSubject.onNext(20.0)
+        distanceToLandingZoneSubject.onNext(2000.0)
         verify(exactly = 1) { landingHelper.startLanding() }
     }
 
