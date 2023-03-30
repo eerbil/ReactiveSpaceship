@@ -1,6 +1,5 @@
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 /** PART 2: Flight **/
 /** During our flight we have a lot of sensors that relay information about different parts of the spaceship
@@ -12,7 +11,7 @@ class SensorManager(sensorRepository: SensorRepository) {
     // We want to return the alert status every time one of the sensors publishes an uncorrupted data.
     private val alertSensor1 = sensorRepository.alertSensor1
     private val alertSensor2 = sensorRepository.alertSensor2
-    val showAlert: Flowable<Boolean> =
+    val showAlert: Observable<Boolean> =
         alertSensor1.mergeWith(alertSensor2).filter { !it.isCorrupted }.map { it.data }
 
     // Exercise 4: We have two sensors that measures the oxygen level in the cabin continuously and informs the
@@ -22,7 +21,7 @@ class SensorManager(sensorRepository: SensorRepository) {
     private val o2Sensor1 = sensorRepository.o2Sensor1
     private val o2Sensor2 = sensorRepository.o2Sensor2
 
-    val o2Reading: Flowable<Int> =
+    val o2Reading: Observable<Int> =
         o2Sensor1.takeWhile { !it.isCorrupted }.mergeWith(o2Sensor2).map { it.data }
 
     // Exercise 5: We need to save the oxygen level data so we want to calculate the average oxygen level of the oxygen
@@ -37,7 +36,7 @@ class SensorManager(sensorRepository: SensorRepository) {
     // the oxygen reading is less than 4 and pressure is above 0.5.
     private val pressureSensor = sensorRepository.pressureSensor
 
-    val isCriticalLevel: Flowable<Boolean> = Flowable.combineLatest(o2Reading, pressureSensor) { o2, pressure ->
+    val isCriticalLevel: Observable<Boolean> = Observable.combineLatest(o2Reading, pressureSensor) { o2, pressure ->
         o2 < 4 && pressure.data > 0.5
     }.distinctUntilChanged()
 
@@ -50,13 +49,13 @@ class SensorRepository {
     private val o2Sensor2Subject = BehaviorSubject.create<SensorData<Int>>()
     private val pressureSensorSubject = BehaviorSubject.create<SensorData<Double>>()
 
-    val alertSensor1: Flowable<SensorData<Boolean>> = alertSensor1Subject.toFlowable(BackpressureStrategy.BUFFER)
-    val alertSensor2: Flowable<SensorData<Boolean>> = alertSensor2Subject.toFlowable(BackpressureStrategy.BUFFER)
+    val alertSensor1: Observable<SensorData<Boolean>> = alertSensor1Subject
+    val alertSensor2: Observable<SensorData<Boolean>> = alertSensor2Subject
 
-    val o2Sensor1: Flowable<SensorData<Int>> = o2Sensor1Subject.toFlowable(BackpressureStrategy.BUFFER)
-    val o2Sensor2: Flowable<SensorData<Int>> = o2Sensor2Subject.toFlowable(BackpressureStrategy.BUFFER)
+    val o2Sensor1: Observable<SensorData<Int>> = o2Sensor1Subject
+    val o2Sensor2: Observable<SensorData<Int>> = o2Sensor2Subject
 
-    val pressureSensor: Flowable<SensorData<Double>> = pressureSensorSubject.toFlowable(BackpressureStrategy.BUFFER)
+    val pressureSensor: Observable<SensorData<Double>> = pressureSensorSubject
 }
 
 data class SensorData<T>(val data: T, val isCorrupted: Boolean = false)

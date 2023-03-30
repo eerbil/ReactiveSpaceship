@@ -1,8 +1,6 @@
 import io.mockk.*
-import io.reactivex.BackpressureStrategy
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 
@@ -21,12 +19,12 @@ class SensorManagerTest {
     @BeforeEach
     fun beforeEach() {
         val sensorRepository = mockk<SensorRepository>()
-        every { sensorRepository.alertSensor1 } returns alertSensor1Subject.toFlowable(BackpressureStrategy.BUFFER)
-        every { sensorRepository.alertSensor2 } returns alertSensor2Subject.toFlowable(BackpressureStrategy.BUFFER)
+        every { sensorRepository.alertSensor1 } returns alertSensor1Subject
+        every { sensorRepository.alertSensor2 } returns alertSensor2Subject
 
-        every { sensorRepository.o2Sensor1 } returns o2Sensor1Subject.toFlowable(BackpressureStrategy.BUFFER)
-        every { sensorRepository.o2Sensor2 } returns o2Sensor2Subject.toFlowable(BackpressureStrategy.BUFFER)
-        every { sensorRepository.pressureSensor } returns pressureSensorSubject.toFlowable(BackpressureStrategy.BUFFER)
+        every { sensorRepository.o2Sensor1 } returns o2Sensor1Subject
+        every { sensorRepository.o2Sensor2 } returns o2Sensor2Subject
+        every { sensorRepository.pressureSensor } returns pressureSensorSubject
         cut = SensorManager(sensorRepository)
     }
 

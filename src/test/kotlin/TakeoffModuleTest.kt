@@ -1,7 +1,6 @@
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import io.reactivex.BackpressureStrategy
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -20,7 +19,7 @@ class TakeoffModuleTest {
     fun beforeEach() {
         engineData = mockk()
         every { engineData.initiateTakeoff() } just Runs
-        every { engineData.engineBoostPercentage } returns engineBoostSubject.toFlowable(BackpressureStrategy.BUFFER)
+        every { engineData.engineBoostPercentage } returns engineBoostSubject
         cut = TakeoffModule(engineData)
     }
 

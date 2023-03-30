@@ -1,8 +1,10 @@
 import io.mockk.*
-import io.reactivex.BackpressureStrategy
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import io.reactivex.rxjava3.schedulers.TestScheduler
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.concurrent.TimeUnit
 
 class LandingModuleTest {
 
@@ -11,13 +13,16 @@ class LandingModuleTest {
 
     private lateinit var landingHelper: LandingHelper
 
+    val testScheduler = TestScheduler()
+
     private lateinit var cut: LandingModule
 
     @BeforeEach
     fun setUp() {
+        RxJavaPlugins.setComputationSchedulerHandler { testScheduler }
         landingHelper = mockk()
-        every { landingHelper.distanceToLandingZone } returns distanceToLandingZoneSubject.toFlowable(BackpressureStrategy.BUFFER)
-        every { landingHelper.permissionToLand } returns landingIsAllowedSubject.toFlowable(BackpressureStrategy.BUFFER)
+        every { landingHelper.distanceToLandingZone } returns distanceToLandingZoneSubject
+        every { landingHelper.permissionToLand } returns landingIsAllowedSubject
         every { landingHelper.startLanding() } just Runs
         cut = LandingModule(landingHelper)
     }
@@ -42,10 +47,24 @@ class LandingModuleTest {
         verify(exactly = 1) { landingHelper.startLanding() }
     }
 
-    //TODO: Test
     @Test
-    fun checkLandingDistance() {
-        cut.distanceToLanding.subscribe()
+    fun checkDistanceAnnouncements() {
+        val testSubscriber = cut.remainingDistanceAnnouncement.test()
 
+        distanceToLandingZoneSubject.onNext(1235.0)
+        distanceToLandingZoneSubject.onNext(1201.0)
+        distanceToLandingZoneSubject.onNext(1171.0)
+        distanceToLandingZoneSubject.onNext(1148.0)
+        distanceToLandingZoneSubject.onNext(1123.0)
+        testScheduler.advanceTimeBy(5, TimeUnit.SECONDS)
+        distanceToLandingZoneSubject.onNext(1080.0)
+        distanceToLandingZoneSubject.onNext(1001.0)
+        testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
+        distanceToLandingZoneSubject.onNext(959.0)
+        distanceToLandingZoneSubject.onNext(936.0)
+        testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
+        distanceToLandingZoneSubject.onNext(915.0)
+
+        testSubscriber.assertValues("1200", "1100", "900")
     }
 }
