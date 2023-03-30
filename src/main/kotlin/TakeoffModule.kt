@@ -23,10 +23,9 @@ class TakeoffModule(engineData: EngineData) {
     // Exercise 2: Takeoff is possible when the engine boost is 80% or above and we want to trigger
     // takeoff once we reach this level. Make sure the takeoff is triggered only once!
     // HINT: Once we emit true we don't want to emit it again as the takeoff already started
-    val sufficientEngineBoost: Observable<Boolean> =
+    val sufficientEngineBoost: Observable<Unit> =
         engineBoostPercentage
-            .filter { it >= 80 }
-            .map { true }
+            .filter { it >= 80 }.map { }
             .distinctUntilChanged()
 }
 

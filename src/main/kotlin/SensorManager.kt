@@ -9,26 +9,23 @@ class SensorManager(sensorRepository: SensorRepository) {
 
     // Exercise 3: We have two sensors that alert the pilots if there is any problems in the engine.
     // We want to return the alert status every time one of the sensors publishes an uncorrupted data.
-    private val alertSensor1 = sensorRepository.alertSensor1
-    private val alertSensor2 = sensorRepository.alertSensor2
+    private val alert1 = sensorRepository.alert1
+    private val alert2 = sensorRepository.alert2
     val showAlert: Observable<Boolean> =
-        alertSensor1.mergeWith(alertSensor2).filter { !it.isCorrupted }.map { it.data }
+        alert1.mergeWith(alert2)
 
-    // Exercise 4: We have two sensors that measures the oxygen level in the cabin continuously and informs the
-    // pilots whenever one of them publishes a new value. However, sensor1 is broken and therefore we can no longer
-    // use it once it emits a corrupted value. Make sure that the values coming from sensor1 is not used once
-    // it is broken and only use the values from sensor2.
+    // Exercise 4: We have an oxygen sensor that measures the oxygen level in the cabin continuously and informs the
+    // pilots whenever one of them publishes a new value.The sensor might sometimes emit a corrupted value which should be ignored.
     private val o2Sensor1 = sensorRepository.o2Sensor1
-    private val o2Sensor2 = sensorRepository.o2Sensor2
 
     val o2Reading: Observable<Int> =
-        o2Sensor1.takeWhile { !it.isCorrupted }.mergeWith(o2Sensor2).map { it.data }
+        o2Sensor1.filter { !it.isCorrupted }.map { it.data }
 
     // Exercise 5: We need to save the oxygen level data so we want to calculate the average oxygen level of the oxygen
     // reading for both sensors. We want to have a running average for the last 5 values published.
     // Ex: For o2Reading of: 1 2 3 4 5 6 -> 3, 4
     val averageO2Level = o2Reading
-        .buffer(5,1)
+        .buffer(5, 1)
         .map { it.average() }
 
     // Exercise 6: We need to warn the pilots if the cabin pressure increases a lot and for that we need both
@@ -43,17 +40,15 @@ class SensorManager(sensorRepository: SensorRepository) {
 }
 
 class SensorRepository {
-    private val alertSensor1Subject = BehaviorSubject.create<SensorData<Boolean>>()
-    private val alertSensor2Subject = BehaviorSubject.create<SensorData<Boolean>>()
+    private val alert1Subject = BehaviorSubject.create<Boolean>()
+    private val alert2Subject = BehaviorSubject.create<Boolean>()
     private val o2Sensor1Subject = BehaviorSubject.create<SensorData<Int>>()
-    private val o2Sensor2Subject = BehaviorSubject.create<SensorData<Int>>()
     private val pressureSensorSubject = BehaviorSubject.create<SensorData<Double>>()
 
-    val alertSensor1: Observable<SensorData<Boolean>> = alertSensor1Subject
-    val alertSensor2: Observable<SensorData<Boolean>> = alertSensor2Subject
+    val alert1: Observable<Boolean> = alert1Subject
+    val alert2: Observable<Boolean> = alert2Subject
 
     val o2Sensor1: Observable<SensorData<Int>> = o2Sensor1Subject
-    val o2Sensor2: Observable<SensorData<Int>> = o2Sensor2Subject
 
     val pressureSensor: Observable<SensorData<Double>> = pressureSensorSubject
 }

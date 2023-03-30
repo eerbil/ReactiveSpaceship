@@ -69,7 +69,6 @@ class TakeoffModuleTest {
         verify(exactly = 1) { engineData.initiateTakeoff() }
         engineBoostSubject.onNext(90)
         engineBoostSubject.onNext(100)
-
         verify(exactly = 1) { engineData.initiateTakeoff() }
     }
 }
