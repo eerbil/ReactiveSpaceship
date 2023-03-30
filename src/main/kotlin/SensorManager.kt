@@ -5,6 +5,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 /** During our flight we have a lot of sensors that relay information about different parts of the spaceship
  *  and we need to inform the crew if there is anything wrong. For that we collect different kinds of data and
  *  use the ones that are not corrupted. **/
+
 class SensorManager(sensorRepository: SensorRepository) {
 
     // Exercise 3: We have two sensors that alert the pilots if there is any problems in the engine.

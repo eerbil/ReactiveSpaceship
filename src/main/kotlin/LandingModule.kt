@@ -3,9 +3,11 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
+/** PART 3: LANDING **/
 /** Did you know that landing is one of the most dangerous steps of a space mission?
  *  We need to make sure that the spaceship is close enough to land, and also we need to
  *  get the approval from the control tower before landing. **/
+
 class LandingModule(landingHelper: LandingHelper) {
     // Exercise 7:
     // In order to land we need permission from the team at base. Additionally, we need to ensure that the spaceship is
@@ -20,7 +22,6 @@ class LandingModule(landingHelper: LandingHelper) {
             { _, distance ->
                 distance <= 20
             }.filter { it }
-
 
     // Exercise 8:
     // During the landing procedure we want to continuously announce the remaining distance to the landing
